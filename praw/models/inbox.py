@@ -80,7 +80,36 @@ class Inbox(PRAWBase):
         return ListingGenerator(
             self._reddit, API_PATH["comment_replies"], **generator_kwargs
         )
+    
+    def delete_message(self, items: List["praw.models.Message"]):
+        """Delete an inbox message.
 
+        :param items: A list containing instances of :class:`.Message`.
+
+        Requests are batched at 25 items (reddit limit).
+
+        For example, to delete all Messages, try:
+
+        .. code-block:: python
+
+            from praw.models import Message
+
+            messages = []
+            for item in reddit.inbox.all(limit=None):
+                if isinstance(item, Message):
+                    messages.append(item)
+            reddit.inbox.delete_message(messages)
+
+        .. seealso::
+
+            :meth:`.Message.delete_messsage`
+
+        """
+        while items:
+            data = {"id": ",".join(x.fullname for x in items[:25])}
+            self._reddit.post(API_PATH["delete_message"], data=data)
+            items = items[25:]
+            
     def mark_all_read(self):
         """Mark all messages as read with just one API call.
 
