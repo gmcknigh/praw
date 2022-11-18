@@ -49,6 +49,26 @@ class InboxableMixin:
 
         """
         self._reddit.inbox.collapse([self])
+        
+    def delete_message(self):
+        """Delete an inbox message.
+
+        .. note::
+
+            This method pertains only to objects which were retrieved via the inbox.
+
+        Example usage:
+
+        .. code-block:: python
+
+            inbox = reddit.inbox()
+
+            # select first inbox item and delete it
+            message = next(inbox)
+            message.delete_message()
+
+        """
+        self._reddit.inbox.delete_message([self])
 
     def mark_read(self):
         """Mark a single inbox item as read.
